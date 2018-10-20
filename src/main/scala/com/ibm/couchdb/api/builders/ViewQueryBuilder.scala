@@ -141,7 +141,7 @@ object ViewQueryBuilder {
   ViewQueryBuilder[K, V, ID, MR]
 
   case class Builder[K: R, V: R, T: R, ID <: DocsInResult, MR <: ViewOperation](
-      builder: VBuilder[K, V, ID, MR])(implicit kr: W[K], cdr: R[CouchKeyVals[K, V]]) {
+      builder: VBuilder[K, V, ID, MR])(implicit kr: W[K]) {
     def build: QueryView[K, T] = QueryView(
       builder.client, builder.db, builder.design,
       builder.params, builder.ids, builder.view, builder.temporaryView)

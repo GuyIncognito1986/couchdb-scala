@@ -191,10 +191,10 @@ object GetManyDocumentsQueryBuilder {
     }
   }
 
-  private type BasicBuilder = Builder[CouchKeyVals[String, CouchDocRev], ExcludeDocs,
+  type BasicBuilder = Builder[CouchKeyVals[String, CouchDocRev], ExcludeDocs,
       MissingDisallowed]
 
-  private type AllowMissingBuilder = Builder[CouchKeyValsIncludesMissing[String, CouchDocRev],
+  type AllowMissingBuilder = Builder[CouchKeyValsIncludesMissing[String, CouchDocRev],
       ExcludeDocs, MissingAllowed]
 
   private type IncludeDocsBuilder[D] = Builder[CouchDocs[String, CouchDocRev, D], IncludeDocs[D],

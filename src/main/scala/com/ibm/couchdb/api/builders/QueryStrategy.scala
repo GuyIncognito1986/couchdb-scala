@@ -83,7 +83,7 @@ case class QueryByType[K, V, D: R](
     }
   }
 
-  private def queryByType(view: CouchView, kind: String, ps: Map[String, String] = Map.empty) = {
+  private def queryByType(view: CouchView, kind: String) = {
     new Query(client, db).temporaryView[K, V](view) match {
       case Some(v) => v.startKey(Tuple1(kind)).endKey(Tuple2(kind, {})).includeDocs[D].build.query
       case None => Res.Error("not_found", "invalid view specified").toTask

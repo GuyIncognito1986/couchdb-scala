@@ -45,7 +45,7 @@ trait UpickleImplicits extends Types {
     case CouchView(map, reduce) => Js.Obj(mapReduceParams(map, reduce): _*)
   }
 
-  private def mapReduceParams(map: String, reduce: String = ""): Seq[(String, Value)] = {
+  private def mapReduceParams(map: String, reduce: String): Seq[(String, Value)] = {
     val m = Seq("map" -> wJs(map))
     if (reduce.isEmpty) m else m ++ Seq("reduce" -> wJs(reduce))
   }

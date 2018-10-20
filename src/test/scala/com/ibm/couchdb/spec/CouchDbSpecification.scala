@@ -32,7 +32,6 @@ trait CouchDbSpecification extends Specification with
     Fixtures with
     AllExpectations with
     DisjunctionMatchers with
-    MatcherMacros with
     TaskImplicits with
     UpickleImplicits {
   sequential
