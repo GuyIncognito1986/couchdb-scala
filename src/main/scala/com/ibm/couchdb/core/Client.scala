@@ -63,7 +63,7 @@ class Client(config: Config) extends EntityDecoderInstances {
         case r => {
           log.warn(s"Unexpected response status ${r.status}, expected $expectedStatus")
           log.warn(s"Request error\n_Response_\nStatus:${r.status}\n${r.body}")
-          throw CouchException(r)
+          throw CouchException(Res.Error("Error", r.status.reason, r.status))
         }
       }
     })

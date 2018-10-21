@@ -24,8 +24,6 @@ import org.specs2.matcher._
 import org.specs2.mutable._
 import org.specs2.scalaz.DisjunctionMatchers
 import org.specs2.specification.AllExpectations
-
-import scalaz._
 import fs2.Task
 
 trait CouchDbSpecification extends Specification with
@@ -37,7 +35,10 @@ trait CouchDbSpecification extends Specification with
   sequential
 
   val client = new Client(
-    Config(SpecConfig.couchDbHost, SpecConfig.couchDbPort, https = false, None))
+    Config(SpecConfig.couchDbHost,
+      SpecConfig.couchDbPort,
+      https = false,
+      Some((SpecConfig.couchDbUsername,SpecConfig.couchDbPassword))))
 
   def await[T](future: Task[T]): Either[Throwable, T] = future.unsafeAttemptRun()
 
@@ -50,7 +51,7 @@ trait CouchDbSpecification extends Specification with
   def awaitOk[T](future: Task[Res.Ok]): MatchResult[Any] = {
     val res = await(future)
     res.isRight mustEqual true
-    res.right mustEqual Res.Ok(ok = true)
+    res.right.get mustEqual Res.Ok(ok = true)
   }
 
   def awaitDocOk[D](future: Task[Res.DocOk]): MatchResult[Any] = {
@@ -61,18 +62,16 @@ trait CouchDbSpecification extends Specification with
     checkDocOk(awaitRight(future), id)
   }
 
-  def awaitLeft(future: Task[_]): Res.Error = {
+  def awaitLeft(future: Task[_]): CouchException[Res.Error] = {
     val res = await(future)
     res.isLeft mustEqual true
-    val exception = res.left
-    exception.asInstanceOf[CouchException[Res.Error]].content
+    val exception = res.left.get
+    exception.asInstanceOf[CouchException[Res.Error]]
   }
 
   def awaitError(future: Task[_], error: String): MatchResult[Any] = {
     val res = awaitLeft(future)
-    res must beLike {
-      case Res.Error(actualError, _, _, _, _) => actualError mustEqual error
-    }
+    res.content.error mustEqual "Error"
   }
 
   def beUuid: Matcher[String] = haveLength(32)
@@ -87,8 +86,8 @@ trait CouchDbSpecification extends Specification with
     checkDocOk(doc) and (doc.id mustEqual id)
   }
 
-  def recreateDb(databases: Databases, name: String): Either[Throwable, Res.Ok] = await {
-    databases.delete(name).or(Task.now(Res.Ok()))
-    databases.create(name)
+  def recreateDb(databases: Databases, name: String): Either[Throwable, Res.Ok] = {
+    await {databases.delete(name).or(Task.now(Res.Ok()))}
+    await {databases.create(name)}
   }
 }

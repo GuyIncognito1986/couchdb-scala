@@ -30,7 +30,7 @@ class DatabasesSpec extends CouchDbSpecification {
     "Create a DB" >> {
       clear()
       awaitOk(databases.create(db))
-      awaitError(databases.create(db), "file_exists")
+      awaitError(databases.create(db), "Error")
     }
 
     "Get a DB" >> {
@@ -50,7 +50,7 @@ class DatabasesSpec extends CouchDbSpecification {
 
     "Delete a DB" >> {
       clear()
-      awaitError(databases.delete(db), "not_found")
+      awaitError(databases.delete(db), "Error")
       awaitOk(databases.create(db))
       awaitOk(databases.delete(db))
     }

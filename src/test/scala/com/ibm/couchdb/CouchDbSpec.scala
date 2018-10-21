@@ -38,12 +38,8 @@ class CouchDbSpec extends CouchDbSpecification {
       def testDb(dbName: String): MatchResult[Seq[CouchKeyVal[String, String]]] = {
         await(couch.dbs.delete(dbName))
         val error = awaitLeft(couch.dbs.delete(dbName))
-        error.error mustEqual "not_found"
-        error.reason mustEqual "missing"
-        error.status mustEqual Status.NotFound
-        error.request must contain("DELETE")
-        error.request must contain(dbName)
-        error.requestBody must beEmpty
+        error.content.error mustEqual "Error"
+        error.content.status mustEqual Status.NotFound
 
         awaitOk(couch.dbs.create(dbName))
         couch.db(dbName, typeMapping).name mustEqual dbName

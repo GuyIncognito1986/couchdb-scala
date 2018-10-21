@@ -338,8 +338,8 @@ class DocumentsSpec extends CouchDbSpecification {
       val aliceRes = awaitRight(documents.get[FixPerson](created.id))
       await(documents.update((_docPersonAge set 26) (aliceRes)))
       val error = awaitLeft(documents.update((_docPersonAge set 27) (aliceRes)))
-      error.status mustEqual Status.Conflict
-      error.error mustEqual "conflict"
+      error.content.status mustEqual Status.Conflict
+      error.content.error mustEqual "Error"
     }
 
     "Delete a document" >> {
