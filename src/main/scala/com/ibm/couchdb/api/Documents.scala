@@ -23,8 +23,7 @@ import com.ibm.couchdb.api.builders._
 import com.ibm.couchdb.core.Client
 import org.http4s.Status
 import upickle.default.Aliases.{R, W}
-
-import scalaz.concurrent.Task
+import fs2.Task
 
 class Documents(client: Client, db: String, typeMapping: TypeMapping) {
 
@@ -49,8 +48,8 @@ class Documents(client: Client, db: String, typeMapping: TypeMapping) {
           CouchDoc[D](obj, t.name, _attachments = attachments))
       case None =>
         val cl = obj.getClass.getCanonicalName
-        Res.Error(
-          "cannot_create", "No type mapping for " + cl + " available: " + typeMapping).toTask
+        val errorMessage = s"cannot_create No type mapping for ${cl} available: ${typeMapping.toString}"
+        throw CouchException(errorMessage)
     }
   }
 
@@ -173,8 +172,8 @@ class Documents(client: Client, db: String, typeMapping: TypeMapping) {
         Status.Ok)
   }
 
-  private def readFile(path: String): Task[Array[Byte]] = Task {
+  private def readFile(path: String): Task[Array[Byte]] = Task.now({
     // TODO: replace with scodec / scalaz-stream / scodec-stream?
     Files.readAllBytes(Paths.get(path))
-  }
+  })
 }

@@ -23,14 +23,13 @@ import org.http4s._
 import org.http4s.client.blaze.PooledHttp1Client
 import org.http4s.headers.Authorization
 import org.http4s.util.CaseInsensitiveString
-import scodec.bits.ByteVector
 import upickle.default.Aliases.{R, W}
 import upickle.default.{read, write}
-
+import fs2.{Chunk, Task}
 import scalaz.Scalaz._
-import scalaz.concurrent.Task
 
-class Client(config: Config) {
+
+class Client(config: Config) extends EntityDecoderInstances {
 
   private val log = org.log4s.getLogger
 
@@ -55,21 +54,22 @@ class Client(config: Config) {
       params.map(x => (x._1, Seq(x._2))).toMap)
   }
 
-  def req(request: Request, expectedStatus: Status): Task[Response] = {
+  def req(request: Request, expectedStatus: Status): fs2.Task[Response] = {
     log.debug(s"Making a request $request")
-    client.toHttpService.run(request).flatMap(response => {
+    client.toHttpService.run(request).map(
+      response => {
       response.orNotFound match {
-        case r if r.status == expectedStatus => Task.now(r)
+        case r if r.status == expectedStatus =>  r
         case r => {
           log.warn(s"Unexpected response status ${r.status}, expected $expectedStatus")
           log.warn(s"Request error\n_Response_\nStatus:${r.status}\n${r.body}")
-          Task.fail(CouchException(r))
+          throw CouchException(r)
         }
       }
     })
   }
 
-  def reqAndRead[T: R](request: Request, expectedStatus: Status): Task[T] = {
+  def reqAndRead[T: R](request: Request, expectedStatus: Status): fs2.Task[T] = {
     for {
       response <- req(request, expectedStatus)
       asString <- response.as[String]
@@ -79,7 +79,7 @@ class Client(config: Config) {
   def getRaw(
       resource: String,
       expectedStatus: Status,
-      params: Seq[(String, String)] = Seq.empty[(String, String)]): Task[String] = {
+      params: Seq[(String, String)] = Seq.empty[(String, String)]): fs2.Task[String] = {
     val request = Request(
       method = GET,
       uri = url(resource, params),
@@ -102,13 +102,15 @@ class Client(config: Config) {
     val request = Request(
       method = GET,
       uri = url(resource))
-    req(request, expectedStatus).as[ByteVector].map(_.toArray)
+    //implicit val decoder = EntityDecoder[ByteVector]
+
+    req(request, expectedStatus).as[Chunk[Byte]].map(_.toArray)
   }
 
   private def put[T: R](
       resource: String,
       expectedStatus: Status,
-      entity: EntityEncoder.Entity,
+      entity: Entity,
       contentType: String): Task[T] = {
     val headers =
       if (!contentType.isEmpty) baseHeadersWithAccept.put(Header("Content-Type", contentType))

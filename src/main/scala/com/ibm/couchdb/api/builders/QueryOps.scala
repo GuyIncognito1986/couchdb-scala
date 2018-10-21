@@ -22,7 +22,7 @@ import org.http4s.Status
 import upickle.default.Aliases.{R, W}
 import upickle.default._
 
-import scalaz.concurrent.Task
+import fs2.Task
 
 case class QueryOps(client: Client) {
 

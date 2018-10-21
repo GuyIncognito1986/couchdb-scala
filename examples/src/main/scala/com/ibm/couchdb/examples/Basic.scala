@@ -18,9 +18,7 @@ package com.ibm.couchdb.examples
 
 import com.ibm.couchdb._
 import org.slf4j.LoggerFactory
-
-import scalaz._
-import scalaz.concurrent.Task
+import fs2.Task
 
 object Basic extends App {
   private val logger = LoggerFactory.getLogger(Basic.getClass)
@@ -46,7 +44,7 @@ object Basic extends App {
   typeMapping.get(classOf[Person]).foreach { mType =>
     val actions: Task[Seq[Person]] = for {
     // Delete the database or ignore the error if it doesn't exist
-      _ <- couch.dbs.delete(dbName).ignoreError
+      _ <- couch.dbs.delete(dbName)
       // Create a new database
       _ <- couch.dbs.create(dbName)
       // Insert documents into the database
@@ -54,14 +52,20 @@ object Basic extends App {
       // Retrieve all documents from the database and unserialize to Person
       docs <- db.docs.getMany.includeDocs[Person].byTypeUsingTemporaryView(mType).build.query
     } yield docs.getDocsData
-
+    couch.dbs.delete(dbName)
+    couch.dbs.create(dbName)
+    db.docs.createMany(Seq(alice, bob, carl))
+    db.docs.getMany.includeDocs[Person].byTypeUsingTemporaryView(mType).build.query
     // Execute the actions and process the result
-    actions.unsafePerformAsync(x => x match {
-      // In case of an error (left side of Either), print it
-      case -\/(e) => logger.error(e.getMessage, e)
-      // In case of a success (right side of Either), print each object
-      case \/-(a) => a.foreach(x => logger.info(x.toString))
-    })
+    actions.unsafeRunAsync(x =>
+      try{
+        x.map(ps => ps.foreach(p => logger.info(p.toString)))
+        ()
+      }
+      catch{
+        case e: Throwable => logger.error(e.toString)
+      }
+    )
     couch.client.client.shutdownNow()
   }
 }

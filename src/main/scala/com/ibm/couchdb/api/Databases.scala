@@ -20,7 +20,7 @@ import com.ibm.couchdb.Res
 import com.ibm.couchdb.core.Client
 import org.http4s.Status
 
-import scalaz.concurrent.Task
+import fs2.Task
 
 class Databases(client: Client) {
 

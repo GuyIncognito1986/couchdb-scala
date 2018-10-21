@@ -18,7 +18,7 @@ package com.ibm.couchdb
 
 import org.http4s.Status
 
-import scalaz.concurrent.Task
+import fs2.Task
 
 object Res {
 

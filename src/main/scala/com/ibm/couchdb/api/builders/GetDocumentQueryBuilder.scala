@@ -22,7 +22,7 @@ import org.http4s.Status
 import upickle.default.Aliases.R
 import upickle.default.write
 
-import scalaz.concurrent.Task
+import fs2.Task
 
 case class GetDocumentQueryBuilder(
     client: Client, db: String, params: Map[String, String] = Map.empty[String, String]) {

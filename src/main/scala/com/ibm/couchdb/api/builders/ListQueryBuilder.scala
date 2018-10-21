@@ -21,8 +21,7 @@ import com.ibm.couchdb.core.Client
 import org.http4s.Status
 import upickle.default.Aliases.W
 import upickle.default.write
-
-import scalaz.concurrent.Task
+import fs2.Task
 
 case class ListQueryBuilder(
     client: Client,

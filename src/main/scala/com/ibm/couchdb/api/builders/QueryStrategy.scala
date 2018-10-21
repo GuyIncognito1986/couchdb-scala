@@ -24,7 +24,7 @@ import upickle.default._
 import com.ibm.couchdb._
 
 import scala.reflect.ClassTag
-import scalaz.concurrent.Task
+import fs2.Task
 
 case class QueryBasic[C: R](
     client: Client, db: String, url: String, params: Map[String, String] = Map.empty,
