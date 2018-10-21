@@ -18,11 +18,11 @@ package com.ibm.couchdb.spec
 
 object SpecConfig {
 
-  val couchDbHost      = System.getProperty("couchDbHost", "127.0.0.1")
+  val couchDbHost      = System.getProperty("couchDbHost", "192.168.0.200")
   val couchDbPort      = System.getProperty("couchDbPort", "5984").toInt
   val couchDbHttpsPort = System.getProperty("couchDbHttpsPort", "6984").toInt
   val couchDbUsername  = System.getProperty("couchDbUsername", "admin")
-  val couchDbPassword  = System.getProperty("couchDbPassword", "admin")
+  val couchDbPassword  = System.getProperty("couchDbPassword", "Sha69roN")
 
   private val log = org.log4s.getLogger
 

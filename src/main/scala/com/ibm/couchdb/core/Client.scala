@@ -57,26 +57,16 @@ class Client(config: Config) {
 
   def req(request: Request, expectedStatus: Status): Task[Response] = {
     log.debug(s"Making a request $request")
-    client.toHttpService.run(request) flatMap { response =>
-      log.debug(s"Received response $response")
-      if (response.status == expectedStatus) {
-        Task.now(response)
-      } else {
-        log.warn(s"Unexpected response status ${response.status}, expected $expectedStatus")
-        for {
-          responseBody <- response.as[String]
-          requestBody <- EntityDecoder.decodeString(request)
-          errorRaw = read[Res.Error](responseBody)
-          error = errorRaw.copy(
-            status = response.status,
-            request = request.toString,
-            requestBody = requestBody
-          )
-          _ = log.warn(s"Request error $error")
-          fail <- Task.fail(CouchException[Res.Error](error))
-        } yield fail
+    client.toHttpService.run(request).flatMap(response => {
+      response.orNotFound match {
+        case r if r.status == expectedStatus => Task.now(r)
+        case r => {
+          log.warn(s"Unexpected response status ${r.status}, expected $expectedStatus")
+          log.warn(s"Request error\n_Response_\nStatus:${r.status}\n${r.body}")
+          Task.fail(CouchException(r))
+        }
       }
-    }
+    })
   }
 
   def reqAndRead[T: R](request: Request, expectedStatus: Status): Task[T] = {

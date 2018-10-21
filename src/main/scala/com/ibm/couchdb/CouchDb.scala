@@ -34,7 +34,7 @@ class CouchDb private(
   val server = new Server(client)
   val dbs    = new Databases(client)
 
-  private val memo = Memo.mutableHashMapMemo[(String, TypeMapping), CouchDbApi] {
+  private val memo = Memo.immutableHashMapMemo[(String, TypeMapping), CouchDbApi] {
     case (db, types) =>
       CouchDbApi(
         db,
