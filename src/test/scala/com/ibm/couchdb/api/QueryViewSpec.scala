@@ -20,7 +20,7 @@ import com.ibm.couchdb.spec.CouchDbSpecification
 import com.ibm.couchdb.{CouchDocs, CouchKeyVals, CouchReducedKeyVals}
 import org.specs2.matcher.MatchResult
 
-import scalaz.concurrent.Task
+import fs2.Task
 
 class QueryViewSpec extends CouchDbSpecification {
 

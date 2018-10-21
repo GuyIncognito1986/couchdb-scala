@@ -26,7 +26,7 @@ import org.specs2.scalaz.DisjunctionMatchers
 import org.specs2.specification.AllExpectations
 
 import scalaz._
-import scalaz.concurrent.Task
+import fs2.Task
 
 trait CouchDbSpecification extends Specification with
     Fixtures with
@@ -39,16 +39,18 @@ trait CouchDbSpecification extends Specification with
   val client = new Client(
     Config(SpecConfig.couchDbHost, SpecConfig.couchDbPort, https = false, None))
 
-  def await[T](future: Task[T]): Throwable \/ T = future.unsafePerformSyncAttempt
+  def await[T](future: Task[T]): Either[Throwable, T] = future.unsafeAttemptRun()
 
   def awaitRight[T](future: Task[T]): T = {
     val res = await(future)
-    res must beRightDisjunction
+    res.isRight mustEqual true
     res.toOption.get
   }
 
   def awaitOk[T](future: Task[Res.Ok]): MatchResult[Any] = {
-    await(future) must beRightDisjunction(Res.Ok(ok = true))
+    val res = await(future)
+    res.isRight mustEqual true
+    res.right mustEqual Res.Ok(ok = true)
   }
 
   def awaitDocOk[D](future: Task[Res.DocOk]): MatchResult[Any] = {
@@ -61,9 +63,9 @@ trait CouchDbSpecification extends Specification with
 
   def awaitLeft(future: Task[_]): Res.Error = {
     val res = await(future)
-    res must beLeftDisjunction
-    val -\/(e) = res
-    e.asInstanceOf[CouchException[Res.Error]].content
+    res.isLeft mustEqual true
+    val exception = res.left
+    exception.asInstanceOf[CouchException[Res.Error]].content
   }
 
   def awaitError(future: Task[_], error: String): MatchResult[Any] = {
@@ -85,10 +87,8 @@ trait CouchDbSpecification extends Specification with
     checkDocOk(doc) and (doc.id mustEqual id)
   }
 
-  def recreateDb(databases: Databases, name: String): \/[Throwable, Unit] = await {
-    for {
-      _ <- databases.delete(name).or(Task.now(Res.Ok()))
-      _ <- databases.create(name)
-    } yield ()
+  def recreateDb(databases: Databases, name: String): Either[Throwable, Res.Ok] = await {
+    databases.delete(name).or(Task.now(Res.Ok()))
+    databases.create(name)
   }
 }
