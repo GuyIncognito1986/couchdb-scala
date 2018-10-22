@@ -17,7 +17,6 @@
 package com.ibm.couchdb
 
 import com.ibm.couchdb.spec.{CouchDbSpecification, SpecConfig}
-import org.http4s.Status
 
 class BasicAuthSpec extends CouchDbSpecification {
 
