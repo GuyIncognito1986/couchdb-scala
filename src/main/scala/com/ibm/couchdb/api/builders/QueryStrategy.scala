@@ -16,14 +16,11 @@
 
 package com.ibm.couchdb.api.builders
 
-import com.ibm.couchdb.api.Query
 import com.ibm.couchdb.core.Client
-import com.ibm.couchdb.{CouchDocs, CouchView, Req, Res, TypeMapping}
+import com.ibm.couchdb.{CouchView, Req}
 import upickle.default.Aliases.{R, W}
 import upickle.default._
 import com.ibm.couchdb._
-
-import scala.reflect.ClassTag
 import fs2.Task
 
 case class QueryBasic[C: R](
