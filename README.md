@@ -22,7 +22,7 @@ It's based on these awesome libraries:
 Add the following dependency to your SBT config:
 
 ```Scala
-libraryDependencies += "com.ibm" %% "couchdb-scala" % "0.7.2"
+libraryDependencies += "io.github.guyincognito1986" %% "couchdb-scala" % "1.0.2"
 ```
 
 
@@ -595,35 +595,8 @@ sbt "run-main com.ibm.couchdb.examples.Basic"
 ```
 
 
-## Mailing list
-
-Please feel free to join our mailing list, we welcome all questions and
-suggestions: https://groups.google.com/forum/#!forum/couchdb-scala
-
-
-## Contributing
-
-We welcome contributions, but request you follow these guidelines. Please raise
-any bug reports on the project's [issue
-tracker](https://github.com/beloglazov/couchdb-scala/issues).
-
-In order for us to accept pull-requests, the contributor must first complete a
-Contributor License Agreement (CLA). This clarifies the intellectual property
-license granted with any contribution. It is for your protection as a
-Contributor as well as the protection of IBM and its customers; it does not
-change your rights to use your own Contributions for any other purpose.
-
-You can download the CLAs here:
-
-  - [individual](cla/cla-individual.pdf)
-  - [corporate](cla/cla-corporate.pdf)
-
-If you are an IBMer, please contact us directly as the contribution process is
-slightly different.
-
-
 ## Contributors
-
+  - Anton Semenov https://github.com/GuyIncognito1986
   - [Anton Beloglazov](http://beloglazov.info/) ([@beloglazov](https://github.com/beloglazov))
   - Ermyas Abebe ([@ermyas](https://github.com/ermyas))
 
