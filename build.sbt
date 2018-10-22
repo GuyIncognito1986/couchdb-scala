@@ -1,8 +1,8 @@
 name := "couchdb-scala"
 
-version := "0.9.0-RELEASE"
+version := "1.0.0-RELEASE"
 scalaVersion := "2.12.6"
-description := "A purely functional Scala client for CouchDB based on work by ibm guys"
+description := "A purely functional Scala client for CouchDB based on work by ibm guys (Anton Beloglazov and Ermyas Abebe)"
 licenses := Seq("The Apache Software License, Version 2.0"
   -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 test in assembly := {}
@@ -40,8 +40,8 @@ logBuffered := false
 
 publishArtifact in Test := false
 
-//assemblyMergeStrategy in assembly := {
-//  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
-//  case "reference.conf" => MergeStrategy.concat
-//  case _ => MergeStrategy.first
-//}
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case "reference.conf" => MergeStrategy.concat
+  case _ => MergeStrategy.last
+}
