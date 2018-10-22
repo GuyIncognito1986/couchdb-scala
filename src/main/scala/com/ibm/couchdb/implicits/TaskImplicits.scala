@@ -18,7 +18,7 @@ package com.ibm.couchdb.implicits
 
 import com.ibm.couchdb.Res
 
-import scalaz.concurrent.Task
+import fs2.Task
 
 trait TaskImplicits {
 

@@ -1,6 +1,6 @@
 name := "couchdb-scala"
 
-version := "0.9.0-SNAPSHOT"
+version := "0.9.0-RELEASE"
 scalaVersion := "2.12.6"
 description := "A purely functional Scala client for CouchDB based on work by ibm guys"
 licenses := Seq("The Apache Software License, Version 2.0"

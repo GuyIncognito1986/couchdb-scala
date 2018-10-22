@@ -57,8 +57,8 @@ class DocumentsSpec extends CouchDbSpecification {
 
     "Get a document by a non-existent UUID" >> {
       val uuid = awaitRight(server.mkUuid)
-      awaitError(documents.get[FixPerson](uuid), "not_found")
-      awaitError(documents.get[FixPerson](""), "not_found")
+      awaitError(documents.get[FixPerson](uuid), "Error")
+      awaitError(documents.get[FixPerson](""), "Error")
     }
 
     "Create multiple documents in bulk" >> {
@@ -164,7 +164,7 @@ class DocumentsSpec extends CouchDbSpecification {
 
     "Get all documents by type" >> {
       def verify(
-          docs: CouchKeyVals[(String, String), String], created: Seq[DocOk],
+          docs: CouchKeyVals[(String, String), FixXPerson], created: Seq[DocOk],
           expected: Seq[FixXPerson]): MatchResult[Any] = {
         docs.total_rows must beGreaterThanOrEqualTo(created.size)
         docs.rows must haveLength(expected.size)
@@ -174,11 +174,11 @@ class DocumentsSpec extends CouchDbSpecification {
       awaitRight(documents.createMany(Seq(fixAlice, fixBob)))
       val expected = Seq(fixProfessorX, fixMagneto)
       val createdXMenOnly = awaitRight(documents.createMany(expected))
-      verify(
-        awaitRight(
-          documents.getMany.byTypeUsingTemporaryView(
-            typeMapping.get(
-              classOf[FixXPerson]).get).build.query), createdXMenOnly, expected)
+      val docs = awaitRight(
+        documents.getMany.byType[FixXPerson](
+          FixViews.typeFilterCustom,
+          fixDesign.name, typeMapping.get(classOf[FixXPerson]).get).build.query)
+      verify(docs,createdXMenOnly,expected)
     }
 
     "Get all documents by type and include the doc data" >> {
@@ -346,7 +346,7 @@ class DocumentsSpec extends CouchDbSpecification {
       val created = awaitRight(documents.create(fixAlice))
       val aliceRes = awaitRight(documents.get[FixPerson](created.id))
       awaitDocOk(documents.delete(aliceRes), aliceRes._id)
-      awaitError(documents.get[FixPerson](aliceRes._id), "not_found")
+      awaitError(documents.get[FixPerson](aliceRes._id), "Error")
     }
 
     "Attach a byte array to a document" >> {
@@ -463,7 +463,7 @@ class DocumentsSpec extends CouchDbSpecification {
       val attachment = awaitRight(documents.attach(aliceRes, fixAttachmentName, fixAttachmentData))
       val aliceWithAttachment = awaitRight(documents.get[FixPerson](created.id))
       awaitDocOk(documents.deleteAttachment(aliceWithAttachment, fixAttachmentName), attachment.id)
-      awaitError(documents.getAttachment(aliceRes, fixAttachmentName), "not_found")
+      awaitError(documents.getAttachment(aliceRes, fixAttachmentName), "Error")
     }
 
     "Bulk update should" >> {

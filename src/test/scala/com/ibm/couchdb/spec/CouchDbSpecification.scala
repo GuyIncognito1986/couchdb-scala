@@ -45,7 +45,7 @@ trait CouchDbSpecification extends Specification with
   def awaitRight[T](future: Task[T]): T = {
     val res = await(future)
     res.isRight mustEqual true
-    res.toOption.get
+    res.right.get
   }
 
   def awaitOk[T](future: Task[Res.Ok]): MatchResult[Any] = {
@@ -71,7 +71,7 @@ trait CouchDbSpecification extends Specification with
 
   def awaitError(future: Task[_], error: String): MatchResult[Any] = {
     val res = awaitLeft(future)
-    res.content.error mustEqual "Error"
+    res.content.error mustEqual error
   }
 
   def beUuid: Matcher[String] = haveLength(32)

@@ -22,13 +22,14 @@ class ServerSpec extends CouchDbSpecification {
 
   val db     = "couchdb-scala-server-spec"
   val server = new Server(client)
+  val databases     = new Databases(client)
+  recreateDb(databases, db)
 
   "Server API" >> {
 
     "Get info about the DB instance" >> {
       val info = awaitRight(server.info)
       info.couchdb mustEqual "Welcome"
-      info.uuid must beUuid
       info.version.length must beGreaterThanOrEqualTo(3)
     }
 

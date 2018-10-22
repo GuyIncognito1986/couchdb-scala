@@ -34,12 +34,13 @@ object Res {
   }
 
   case class ServerInfo(
-      couchdb: String,
-      uuid: String,
-      version: String,
-      vendor: ServerVendor)
+     couchdb: String,
+     version: String,
+     git_sha: String,
+     features: Seq[String],
+     vendor: ServerVendor)
 
-  case class ServerVendor(version: String, name: String)
+  case class ServerVendor(name: String)
 
   case class DbInfo(
       committed_update_seq: Int,
