@@ -22,6 +22,9 @@ It's based on these awesome libraries:
 Add the following dependency to your SBT config:
 
 ```Scala
+
+resolvers ++= Seq("Sonatype OSS Releases"  at "http://oss.sonatype.org/content/repositories/releases/")
+
 libraryDependencies += "io.github.guyincognito1986" %% "couchdb-scala" % "1.0.2"
 ```
 
