@@ -606,5 +606,4 @@ sbt "run-main com.ibm.couchdb.examples.Basic"
 
 ## Copyright and license
 
-© Copyright 2015 IBM Corporation, Google Inc. Distributed under the [Apache 2.0
-license](LICENSE).
+Apache 2.0 license
