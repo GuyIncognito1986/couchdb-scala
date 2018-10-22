@@ -42,18 +42,30 @@ object Res {
 
   case class ServerVendor(name: String)
 
+  case class Sizes(
+        file: Int,
+        external: Int,
+        active: Int)
+  case class Other(data_size: Int)
+  case class Cluster(
+        q: Int,
+        n: Int,
+        w: Int,
+        r: Int)
   case class DbInfo(
-      committed_update_seq: Int,
-      compact_running: Boolean,
-      data_size: Int,
-      db_name: String,
-      disk_format_version: Int,
-      disk_size: Int,
-      doc_count: Int,
-      doc_del_count: Int,
-      instance_start_time: String,
-      purge_seq: Int,
-      update_seq: Int)
+       db_name: String,
+       update_seq: String,
+       sizes: Sizes,
+       purge_seq: Int,
+       other: Other,
+       doc_del_count: Int,
+       doc_count: Int,
+       disk_size: Int,
+       disk_format_version: Int,
+       data_size: Int,
+       compact_running: Boolean,
+       cluster: Cluster,
+       instance_start_time: String)
 
   case class ViewIndexInfo(
       compact_running: Boolean,

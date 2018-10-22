@@ -146,7 +146,7 @@ class DesignSpec extends CouchDbSpecification {
       val attachment = awaitRight(design.attach(doc, fixAttachmentName, fixAttachmentData))
       val docWithAttachment = awaitRight(design.get(fixDesign.name))
       awaitDocOk(design.deleteAttachment(docWithAttachment, fixAttachmentName), attachment.id)
-      awaitError(design.getAttachment(doc, fixAttachmentName), "not_found")
+      awaitError(design.getAttachment(doc, fixAttachmentName), "Error")
     }
   }
 }
