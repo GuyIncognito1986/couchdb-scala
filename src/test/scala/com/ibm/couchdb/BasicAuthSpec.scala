@@ -21,7 +21,7 @@ import org.http4s.Status
 
 class BasicAuthSpec extends CouchDbSpecification {
 
-  val couch      = CouchDb(SpecConfig.couchDbHost, SpecConfig.couchDbPort)
+  val couch      = CouchDb(SpecConfig.couchDbHost, SpecConfig.couchDbPort, false, "", "")
   val couchAdmin = CouchDb(
     SpecConfig.couchDbHost,
     SpecConfig.couchDbPort,
@@ -33,17 +33,12 @@ class BasicAuthSpec extends CouchDbSpecification {
   val adminUrl = s"/_config/admins/${SpecConfig.couchDbUsername}"
 
   "Basic authentication" >> {
-
     "Only admin can create and delete databases" >> {
-      awaitRight(
-        couch.client.put[String, String](
-          adminUrl, Status.Ok, SpecConfig.couchDbPassword)) mustEqual ""
-      awaitError(couch.dbs.create(db), "unauthorized")
-      await(couchAdmin.dbs.delete(db))
+      await(couchAdmin.dbs.delete(db).ignoreError)
+      awaitError(couch.dbs.create(db), "Error")
+      await(couchAdmin.dbs.delete(db).ignoreError)
       awaitOk(couchAdmin.dbs.create(db))
-      awaitDocOk(couch.db(db, typeMapping).docs.create(fixAlice))
-      awaitDocOk(couchAdmin.db(db, typeMapping).docs.create(fixAlice))
-      awaitRight(couchAdmin.client.delete[String](adminUrl, Status.Ok)) must not be empty
+      awaitError(couch.db(db, typeMapping).docs.create(fixAlice), "Error")
     }
   }
 }

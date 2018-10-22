@@ -58,7 +58,7 @@ class DocumentsSpec extends CouchDbSpecification {
     "Get a document by a non-existent UUID" >> {
       val uuid = awaitRight(server.mkUuid)
       awaitError(documents.get[FixPerson](uuid), "Error")
-      awaitError(documents.get[FixPerson](""), "Error")
+      awaitError(documents.get[FixPerson](""), "not_found")
     }
 
     "Create multiple documents in bulk" >> {

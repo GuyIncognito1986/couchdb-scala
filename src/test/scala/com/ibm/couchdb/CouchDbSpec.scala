@@ -23,7 +23,11 @@ import org.specs2.matcher.MatchResult
 
 class CouchDbSpec extends CouchDbSpecification {
 
-  val couch = CouchDb(SpecConfig.couchDbHost, SpecConfig.couchDbPort)
+  val couch = CouchDb(SpecConfig.couchDbHost,
+    SpecConfig.couchDbPort,
+    false,
+    SpecConfig.couchDbUsername,
+    SpecConfig.couchDbPassword)
 
   val db1 = "couchdb-scala-couchdb-spec1"
   val db2 = "couchdb-scala-couchdb-spec2"
@@ -40,7 +44,6 @@ class CouchDbSpec extends CouchDbSpecification {
         val error = awaitLeft(couch.dbs.delete(dbName))
         error.content.error mustEqual "Error"
         error.content.status mustEqual Status.NotFound
-
         awaitOk(couch.dbs.create(dbName))
         couch.db(dbName, typeMapping).name mustEqual dbName
         couch.db(dbName, typeMapping).docs must beAnInstanceOf[Documents]
