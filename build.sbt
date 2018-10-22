@@ -1,7 +1,7 @@
 name := "couchdb-scala"
 
-version := "1.0.1"
-scalaVersion := "2.12.6"
+version := "1.0.2"
+scalaVersion := "2.12.7"
 description := "A purely functional Scala client for CouchDB based on work by ibm guys (Anton Beloglazov and Ermyas Abebe)"
 publishMavenStyle := true
 licenses := Seq("The Apache Software License, Version 2.0"
@@ -9,8 +9,7 @@ licenses := Seq("The Apache Software License, Version 2.0"
 publishTo := sonatypePublishTo.value
 sonatypeProfileName := "io.github.guyincognito1986"
 test in assembly := {}
-useGpg := true
-
+organization := "io.github.guyincognito1986"
 import xerial.sbt.Sonatype._
 sonatypeProjectHosting := Some(GitHubHosting("guyincognito1986", "couchdb-scala", "Anton.Semzy@gmail.com"))
 
@@ -53,13 +52,13 @@ assemblyMergeStrategy in assembly := {
   case _ => MergeStrategy.last
 }
 
-pomExtra := {
-    <developers>
-      <developer>
-        <id>GuyIncognito1986</id>
-        <name>Anton Semenov</name>
-        <email>anton.semzy@gmail.com</email>
-        <url>http://www.direct-trader.com</url>
-      </developer>
-    </developers>
-}
+//pomExtra := {
+//    <developers>
+//      <developer>
+//        <id>GuyIncognito1986</id>
+//        <name>Anton Semenov</name>
+//        <email>anton.semzy@gmail.com</email>
+//        <url>http://www.direct-trader.com</url>
+//      </developer>
+//    </developers>
+//}
