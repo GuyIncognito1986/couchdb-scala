@@ -162,46 +162,6 @@ class DocumentsSpec extends CouchDbSpecification {
         expected)
     }
 
-    "Get all documents by type" >> {
-      def verify(
-          docs: CouchKeyVals[(String, String), FixXPerson], created: Seq[DocOk],
-          expected: Seq[FixXPerson]): MatchResult[Any] = {
-        docs.total_rows must beGreaterThanOrEqualTo(created.size)
-        docs.rows must haveLength(expected.size)
-        docs.rows.map(_.value) mustEqual created.map(_.id)
-      }
-      clear()
-      awaitRight(documents.createMany(Seq(fixAlice, fixBob)))
-      val expected = Seq(fixProfessorX, fixMagneto)
-      val createdXMenOnly = awaitRight(documents.createMany(expected))
-      val docs = awaitRight(
-        documents.getMany.byType[FixXPerson](
-          FixViews.typeFilterCustom,
-          fixDesign.name, typeMapping.get(classOf[FixXPerson]).get).build.query)
-      verify(docs,createdXMenOnly,expected)
-    }
-
-    "Get all documents by type and include the doc data" >> {
-      def verify(
-          docs: CouchDocs[(String, String), String, FixXPerson],
-          created: Seq[DocOk], expected: Seq[FixXPerson]): MatchResult[Any] = {
-        docs.total_rows must beGreaterThanOrEqualTo(created.size)
-        docs.rows must haveLength(expected.size)
-        docs.rows.map(_.value) mustEqual created.map(_.id)
-        docs.rows.map(_.doc.doc) mustEqual expected
-        docs.getDocs.map(_.doc) mustEqual expected
-        docs.getDocsData mustEqual expected
-      }
-      clear()
-      awaitRight(documents.createMany(Seq(fixAlice, fixBob)))
-      val expected = Seq(fixProfessorX, fixMagneto)
-      val createdXMenOnly = awaitRight(documents.createMany(expected))
-      verify(
-        awaitRight(
-          documents.getMany.includeDocs[FixXPerson].byTypeUsingTemporaryView(
-            typeMapping.get(classOf[FixXPerson]).get).build.query), createdXMenOnly, expected)
-    }
-
     "Get all documents by type given a permanent type filter view" >> {
       def verify(
           docs: CouchKeyVals[_, String], created: Seq[DocOk],

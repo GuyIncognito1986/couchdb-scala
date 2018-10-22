@@ -70,23 +70,3 @@ case class QueryView[K: W, C: R](
   }
 }
 
-case class QueryByType[K, V, D: R](
-    client: Client, db: String, typeFilterView: CouchView,
-    typeMappings: TypeMapping, params: Map[String, String] = Map.empty,
-    ids: Seq[String] = Seq.empty)
-    (implicit tag: ClassTag[D], kr: R[K], kw: W[K], vr: R[V]) {
-
-  def query: Task[CouchDocs[K, V, D]] = {
-    typeMappings.get(tag.runtimeClass) match {
-      case Some(k) => queryByType(typeFilterView, k.name)
-      case None => Res.Error("not_found", s"type mapping not found").toTask
-    }
-  }
-
-  private def queryByType(view: CouchView, kind: String) = {
-    new Query(client, db).temporaryView[K, V](view) match {
-      case Some(v) => v.startKey(Tuple1(kind)).endKey(Tuple2(kind, {})).includeDocs[D].build.query
-      case None => Res.Error("not_found", "invalid view specified").toTask
-    }
-  }
-}

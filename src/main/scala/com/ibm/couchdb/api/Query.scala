@@ -31,14 +31,7 @@ class Query(client: Client, db: String) {
       none[ViewQueryBuilder[K, V, ExcludeDocs, MapOnly]]
     else ViewQueryBuilder[K, V](client, db, design, view).some
   }
-
-  def temporaryView[K: R, V: R](view: CouchView)(implicit kw: W[K]):
-  Option[ViewQueryBuilder[K, V, ExcludeDocs, MapOnly]] = {
-    if (view.map.isEmpty)
-      none[ViewQueryBuilder[K, V, ExcludeDocs, MapOnly]]
-    else ViewQueryBuilder[K, V](client, db, view).some
-  }
-
+  
   def show(design: String, show: String): Option[ShowQueryBuilder] = {
     if (design.isEmpty || show.isEmpty) none[ShowQueryBuilder]
     else ShowQueryBuilder(client, db, design, show).some
