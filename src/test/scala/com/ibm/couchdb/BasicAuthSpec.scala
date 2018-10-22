@@ -36,7 +36,6 @@ class BasicAuthSpec extends CouchDbSpecification {
     "Only admin can create and delete databases" >> {
       await(couchAdmin.dbs.delete(db).ignoreError)
       awaitError(couch.dbs.create(db), "Error")
-      await(couchAdmin.dbs.delete(db).ignoreError)
       awaitOk(couchAdmin.dbs.create(db))
       awaitError(couch.db(db, typeMapping).docs.create(fixAlice), "Error")
     }
