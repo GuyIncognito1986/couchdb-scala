@@ -1,6 +1,6 @@
 name := "couchdb-scala"
 
-version := "1.0.3"
+version := "1.0.3.1"
 scalaVersion := "2.12.7"
 description := "A purely functional Scala client for CouchDB based on work by ibm guys (Anton Beloglazov and Ermyas Abebe)"
 publishMavenStyle := true
