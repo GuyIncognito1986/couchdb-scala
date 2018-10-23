@@ -540,7 +540,12 @@ Here is a basic example of an application that stores a set of case class
 instances in a database, retrieves them back, and prints out afterwards:
 
 ```Scala
+import com.ibm.couchdb._
+import org.slf4j.LoggerFactory
+import fs2.Task
+
 object Basic extends App {
+  private val logger = LoggerFactory.getLogger(Basic.getClass)
 
   // Define a simple case class to represent our data model
   case class Person(name: String, age: Int)
@@ -560,25 +565,33 @@ object Basic extends App {
   // Get an instance of the DB API by name and type mapping
   val db     = couch.db(dbName, typeMapping)
 
-  val actions = for {
-  // Delete the database or ignore the error if it doesn't exist
-    _ <- couch.dbs.delete(dbName).ignoreError
-    // Create a new database
-    _ <- couch.dbs.create(dbName)
-    // Insert documents into the database
-    _ <- db.docs.createMany(Seq(alice, bob, carl))
-    // Retrieve all documents from the database and unserialize to Person
-    docs <- db.docs.getMany.includeDocs[Person].build.query
-  } yield docs.getDocsData
-
-  // Execute the actions and process the result
-  actions.attemptRun match {
-    // In case of an error (left side of Either), print it
-    case -\/(e) => println(e)
-    // In case of a success (right side of Either), print each object
-    case \/-(a) => a.map(println(_))
+  typeMapping.get(classOf[Person]).foreach { mType =>
+    val actions: Task[Seq[Person]] = for {
+    // Delete the database or ignore the error if it doesn't exist
+      _ <- couch.dbs.delete(dbName)
+      // Create a new database
+      _ <- couch.dbs.create(dbName)
+      // Insert documents into the database
+      _ <- db.docs.createMany(Seq(alice, bob, carl))
+      // Retrieve all documents from the database and unserialize to Person
+      docs <- db.docs.getMany.includeDocs[Person].byTypeUsingTemporaryView(mType).build.query
+    } yield docs.getDocsData
+    couch.dbs.delete(dbName)
+    couch.dbs.create(dbName)
+    db.docs.createMany(Seq(alice, bob, carl))
+    db.docs.getMany.includeDocs[Person].byTypeUsingTemporaryView(mType).build.query
+    // Execute the actions and process the result
+    actions.unsafeRunAsync(x =>
+      try{
+        x.map(ps => ps.foreach(p => logger.info(p.toString)))
+        ()
+      }
+      catch{
+        case e: Throwable => logger.error(e.toString)
+      }
+    )
+    couch.client.client.shutdownNow()
   }
-
 }
 ```
 

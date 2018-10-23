@@ -1,6 +1,6 @@
 name := "couchdb-scala"
 
-version := "1.0.2"
+version := "1.0.3"
 scalaVersion := "2.12.7"
 description := "A purely functional Scala client for CouchDB based on work by ibm guys (Anton Beloglazov and Ermyas Abebe)"
 publishMavenStyle := true
@@ -51,14 +51,3 @@ assemblyMergeStrategy in assembly := {
   case "reference.conf" => MergeStrategy.concat
   case _ => MergeStrategy.last
 }
-
-//pomExtra := {
-//    <developers>
-//      <developer>
-//        <id>GuyIncognito1986</id>
-//        <name>Anton Semenov</name>
-//        <email>anton.semzy@gmail.com</email>
-//        <url>http://www.direct-trader.com</url>
-//      </developer>
-//    </developers>
-//}
