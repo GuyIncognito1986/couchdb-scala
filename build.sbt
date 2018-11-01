@@ -1,6 +1,6 @@
 name := "couchdb-scala"
 
-version := "1.0.3.1"
+version := "1.0.3.2"
 scalaVersion := "2.12.7"
 description := "A purely functional Scala client for CouchDB based on work by ibm guys (Anton Beloglazov and Ermyas Abebe)"
 publishMavenStyle := true
@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
   "org.http4s"                  %% "http4s-core"                 % "0.17.6",
   "org.http4s"                  %% "http4s-client"               % "0.17.6",
   "org.http4s"                  %% "http4s-blaze-client"         % "0.17.6",
-  "com.lihaoyi"                 %% "upickle"                     % "0.4.4",
+  "com.lihaoyi"                 %% "upickle"                     % "0.6.6",
   "com.github.julien-truffaut"  %% "monocle-core"                % "1.3.2",
   "com.github.julien-truffaut"  %% "monocle-macro"               % "1.3.2",
   "org.log4s"                   %% "log4s"                       % "1.4.0",
